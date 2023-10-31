@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { User } from './users/users.entity';
+import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -12,9 +13,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         username: 'root',
         password: '123456',
         database: 'haravan-store',
-        entities: [],
+        entities: [User],
         synchronize: true,
       }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
