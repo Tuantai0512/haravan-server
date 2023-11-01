@@ -1,3 +1,4 @@
+import { BaseEntity } from 'src/common/mysql/base.entity';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum UserRole {
@@ -8,9 +9,7 @@ export enum UserRole {
 @Entity({
   name:'users'
 })
-export class User {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+export class User extends BaseEntity{
 
   @Column()
   email: string;

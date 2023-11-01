@@ -10,13 +10,18 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
-  async save(userDto: UserDto): Promise<UserDto> {
-    const savedUser = await this.usersRepository.save(userDto);
-    return plainToInstance(UserDto, savedUser, {
-      excludeExtraneousValues: true
-    })
+  async save(userDto: UserDto): Promise<UserDto | object> {
+    const selectedUser = await this.usersRepository.findOneBy({ email: userDto.email });
+    if (selectedUser) {
+      return { message: 'Email already exists' }
+    } else {
+      const savedUser = await this.usersRepository.save(userDto);
+      return plainToInstance(UserDto, savedUser, {
+        excludeExtraneousValues: true
+      })
+    }
   }
 
   async findAll(): Promise<UserDto[]> {
