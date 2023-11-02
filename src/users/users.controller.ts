@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Param, Delete, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Password, UserDto } from './users.dto';
+import { LoginForm, Password, UserDto } from './users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -12,12 +12,17 @@ export class UsersController {
   }
 
   @Get(':id')
-  selectOne(@Param('id') id: string): Promise<UserDto> {
+  findEmail(@Param('id') id: string): Promise<UserDto> {
     return this.usersService.findOne(id);
   }
 
-  @Post()
-  createUser(@Body() user: UserDto): Promise<UserDto | {message: string}> {
+  @Post('login')
+  login(@Body() loginForm: LoginForm): Promise<UserDto> {
+    return this.usersService.login(loginForm);
+  }
+
+  @Post('register')
+  register(@Body() user: UserDto): Promise<UserDto | {message: string}> {
     return this.usersService.save(user);
   }
 

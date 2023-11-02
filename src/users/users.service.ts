@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
-import { Password, UserDto } from './users.dto';
+import { LoginForm, Password, UserDto } from './users.dto';
 import { plainToInstance } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 
@@ -37,6 +37,18 @@ export class UsersService {
 
   async findOne(id: string): Promise<UserDto | null> {
     const selectedUser = await this.usersRepository.findOneBy({ id });
+    return plainToInstance(UserDto, selectedUser, {
+      excludeExtraneousValues: true
+    })
+  }
+
+  async login(loginForm: LoginForm): Promise<UserDto>{
+    const selectedUser = await this.usersRepository.findOneBy({ email: loginForm.email})
+
+    if((!selectedUser) || (!await bcrypt.compare(loginForm.password, selectedUser.password))){
+      throw new BadRequestException('invalid credentials');
+    }
+
     return plainToInstance(UserDto, selectedUser, {
       excludeExtraneousValues: true
     })

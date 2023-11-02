@@ -22,3 +22,14 @@ export class Password {
     @IsNotEmpty()
     password: string;
 }
+
+export class LoginForm {
+    @IsNotEmpty()
+    @IsEmail()
+    @Expose()
+    email: string;
+
+    @IsNotEmpty()
+    @Length(8)
+    password: string;
+}
