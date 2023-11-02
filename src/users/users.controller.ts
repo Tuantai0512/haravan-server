@@ -17,7 +17,7 @@ export class UsersController {
   }
 
   @Post('login')
-  login(@Body() loginForm: LoginForm): Promise<UserDto> {
+  login(@Body() loginForm: LoginForm): Promise<{access_token: string}> {
     return this.usersService.login(loginForm);
   }
 
