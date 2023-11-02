@@ -3,7 +3,7 @@ import { UserRole } from "./users.entity";
 import { IsNotEmpty, Length, IsEmail } from "class-validator";
 import { BaseDto } from "src/common/mysql/base.dto";
 
-export class UserDto extends BaseDto{
+export class UserDto extends BaseDto {
 
     @IsNotEmpty()
     @IsEmail()
@@ -16,4 +16,9 @@ export class UserDto extends BaseDto{
 
     @Expose()
     role: UserRole;
+}
+
+export class Password {
+    @IsNotEmpty()
+    password: string;
 }
