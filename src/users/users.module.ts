@@ -5,7 +5,7 @@ import { UsersController } from './users.controller';
 import { User } from './users.entity';
 import { JwtModule } from '@nestjs/jwt';
 
-export const jwtConstants = {
+const jwtConstants = {
   secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
 };
 

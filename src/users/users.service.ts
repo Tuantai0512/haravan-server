@@ -5,7 +5,6 @@ import { User } from './users.entity';
 import { LoginForm, Password, UserDto } from './users.dto';
 import { plainToInstance } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
 
 const saltOrRounds = 12;
 
@@ -14,7 +13,6 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-    private readonly jwtService: JwtService
   ) { }
 
   async save(userDto: UserDto): Promise<UserDto | {message: string}> {
@@ -44,17 +42,14 @@ export class UsersService {
     })
   }
 
-  async login(loginForm: LoginForm): Promise<{access_token: string}>{
+  async login(loginForm: LoginForm): Promise<{id: string}>{
     const selectedUser = await this.usersRepository.findOneBy({ email: loginForm.email})
 
     if((!selectedUser) || (!await bcrypt.compare(loginForm.password, selectedUser.password))){
       throw new BadRequestException('invalid credentials');
     }
 
-    const payload = { sub: selectedUser.id, username: selectedUser.email };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    return { id: selectedUser.id }
   }
 
   async changePassword(id: string, password: Password): Promise<{message: string}> {
