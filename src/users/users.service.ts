@@ -42,14 +42,14 @@ export class UsersService {
     })
   }
 
-  async login(loginForm: LoginForm): Promise<{id: string}>{
+  async login(loginForm: LoginForm): Promise<{id: string, email: string}>{
     const selectedUser = await this.usersRepository.findOneBy({ email: loginForm.email})
 
     if((!selectedUser) || (!await bcrypt.compare(loginForm.password, selectedUser.password))){
       throw new BadRequestException('invalid credentials');
     }
 
-    return { id: selectedUser.id }
+    return { id: selectedUser.id, email: selectedUser.email }
   }
 
   async changePassword(id: string, password: Password): Promise<{message: string}> {

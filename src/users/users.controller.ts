@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Param, Delete, Put, Res, Req, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, Delete, Put, Res, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { LoginForm, Password, UserDto } from './users.dto';
 import { Response, Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from './users.guard';
 
 @Controller('users')
 export class UsersController {
@@ -21,37 +22,19 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @UseGuards(AuthGuard)
   @Post('auth')
-  async auth(@Req() req: Request): Promise<UserDto>{
-    try{
-      const cookie = req.cookies['jwt'];
-
-      const data = await this.jwtService.verifyAsync(cookie);
-
-      if(!data){
-        throw new UnauthorizedException()
-      }
-
-      const user = await this.usersService.findOne(data['id'])
-
-      return user;
-
-    }catch(e){
-      throw new UnauthorizedException()
-    }
+  getProfile(@Req() req) {
+    return req.user;
   }
 
   @Post('login')
-  async login(@Body() loginForm: LoginForm, @Res({ passthrough: true }) res: Response): Promise<{ message: string }> {
+  async login(@Body() loginForm: LoginForm, @Res({ passthrough: true }) res: Response): Promise<{ access_token: string }> {
 
     const payload = await this.usersService.login(loginForm);
 
-    const token = await this.jwtService.signAsync(payload);
-
-    res.cookie('jwt', token, { httpOnly: true });
-
     return {
-      message: 'Login success'
+      access_token: await this.jwtService.signAsync(payload),
     }
   }
 
