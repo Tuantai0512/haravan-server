@@ -1,5 +1,6 @@
+import { Address } from 'src/addresses/addresses.entity';
 import { BaseEntity } from 'src/common/mysql/base.entity';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 
 export enum UserRole {
   ADMIN = "admin",
@@ -7,9 +8,9 @@ export enum UserRole {
 }
 
 @Entity({
-  name:'users'
+  name: 'users'
 })
-export class User extends BaseEntity{
+export class User extends BaseEntity {
 
   @Column()
   email: string;
@@ -22,5 +23,8 @@ export class User extends BaseEntity{
     enum: UserRole,
     default: UserRole.GUEST
   })
-  role: UserRole
+  role: UserRole;
+
+  @OneToMany(() => Address, (photo) => photo.user)
+  addresses: Address[]
 }
