@@ -1,4 +1,5 @@
 import { BaseEntity } from 'src/common/mysql/base.entity';
+import { UserDto } from 'src/users/users.dto';
 import { User } from 'src/users/users.entity';
 import { Entity, Column, ManyToOne } from 'typeorm';
 
@@ -211,13 +212,13 @@ export class Address extends BaseEntity {
     @Column()
     lastName: string;
 
-    @Column()
+    @Column({nullable: true})
     company: string;
 
-    @Column()
+    @Column({nullable: true})
     address1: string;
 
-    @Column()
+    @Column({nullable: true})
     address2: string;
 
     @Column({
@@ -230,11 +231,15 @@ export class Address extends BaseEntity {
     @Column({
         type: 'enum',
         enum: Province,
+        default:Province.VN_HoChiMinh
     })
     province: Province
 
+    @Column({default: false})
+    default:boolean
+
     @ManyToOne(() => User, (user) => user.addresses)
-    user: User
+    user: UserDto
 }
 
 
