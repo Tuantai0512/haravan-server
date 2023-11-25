@@ -5,6 +5,8 @@ import { User } from './users.entity';
 import { LoginForm, Password, UserDto } from './users.dto';
 import { plainToInstance } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
+import { AddressesDto } from 'src/addresses/addresses.dto';
+import { Address } from 'src/addresses/addresses.entity';
 
 const saltOrRounds = 12;
 
@@ -15,13 +17,13 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
   ) { }
 
-  async save(userDto: UserDto): Promise<UserDto | {message: string}> {
+  async save(userDto: UserDto): Promise<UserDto | { message: string }> {
     const hashedPassword = await bcrypt.hash(userDto.password, saltOrRounds);
     const selectedUser = await this.usersRepository.findOneBy({ email: userDto.email });
     if (selectedUser) {
       return { message: 'Email already exists' }
     } else {
-      const savedUser = await this.usersRepository.save({...userDto, password: hashedPassword});
+      const savedUser = await this.usersRepository.save({ ...userDto, password: hashedPassword });
       return plainToInstance(UserDto, savedUser, {
         excludeExtraneousValues: true
       })
@@ -42,32 +44,45 @@ export class UsersService {
     })
   }
 
-  async login(loginForm: LoginForm): Promise<{id: string, email: string}>{
-    const selectedUser = await this.usersRepository.findOneBy({ email: loginForm.email})
+  async login(loginForm: LoginForm): Promise<{ id: string, email: string }> {
+    const selectedUser = await this.usersRepository.findOneBy({ email: loginForm.email })
 
-    if((!selectedUser) || (!await bcrypt.compare(loginForm.password, selectedUser.password))){
+    if ((!selectedUser) || (!await bcrypt.compare(loginForm.password, selectedUser.password))) {
       throw new BadRequestException('invalid credentials');
     }
 
     return { id: selectedUser.id, email: selectedUser.email }
   }
 
-  async changePassword(id: string, password: Password): Promise<{message: string}> {
+  async changePassword(id: string, password: Password): Promise<{ message: string }> {
     password.password = await bcrypt.hash(password.password, saltOrRounds)
     const result = await this.usersRepository.update(id, password);
-    if(result.affected){
-      return { message: 'Change password succeed'};
-    }else{
-      return { message: 'Change password failed'};
+    if (result.affected) {
+      return { message: 'Change password succeed' };
+    } else {
+      return { message: 'Change password failed' };
     }
   }
 
-  async remove(id: string): Promise<{message: string}> {
+  async remove(id: string): Promise<{ message: string }> {
     const result = await this.usersRepository.delete(id);
-    if(result.affected){
-      return { message: 'Email delete succeed'};
-    }else{
-      return { message: 'Email delete failed'};
+    if (result.affected) {
+      return { message: 'Email delete succeed' };
+    } else {
+      return { message: 'Email delete failed' };
     }
+  }
+
+  async findAllAddressById(id: string): Promise<Address[]> {
+    const addresses = await this.usersRepository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.addresses", "address")
+      .where('user.id = :userId', { userId: id })
+      .getOne()
+    if (!addresses) {
+      throw new Error('User not found');
+    }
+
+    return addresses.addresses
   }
 }

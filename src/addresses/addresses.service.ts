@@ -11,7 +11,7 @@ export class AddressesService {
     constructor(
         @InjectRepository(Address)
         private readonly addressesRepository: Repository<Address>,
-        private userService: UsersService
+        private readonly userService: UsersService
     ) { }
 
     async save(addressDto: AddressesDto): Promise<AddressesDto | { message: string }> {
@@ -38,5 +38,9 @@ export class AddressesService {
         } else {
             return { message: 'Email delete failed' };
         }
+    }
+    
+    getAllAddress(id: string) {
+        return this.userService.findAllAddressById(id);
     }
 }

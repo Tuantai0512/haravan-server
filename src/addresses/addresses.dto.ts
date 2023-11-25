@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from "class-validator";
 import { BaseDto } from "src/common/mysql/base.dto";
 import { Country, Province } from "./addresses.entity";
 import { UserDto } from "src/users/users.dto";
-
+import { DoesNotContainSpecialCharacter } from "src/common/decorator/checkSpecialCharacter";
 
 export class AddressesDto extends BaseDto {
 
@@ -11,11 +11,15 @@ export class AddressesDto extends BaseDto {
     @Expose()
     userId: string;
 
+    @DoesNotContainSpecialCharacter()
     @IsNotEmpty()
+    @IsString()
     @Expose()
     firstName: string;
 
+    @DoesNotContainSpecialCharacter()
     @IsNotEmpty()
+    @IsString()
     @Expose()
     lastName: string;
 

@@ -17,4 +17,9 @@ export class AddressesController {
     async deleteAddress(@Param('id') id: string): Promise<{ message: string }> {
         return this.addressesService.remove(id);
     }
+
+    @Get(':id')
+    async getAllAddress(@Param('id') id: string): Promise<any>{
+        return this.addressesService.getAllAddress(id);
+    }
 }
