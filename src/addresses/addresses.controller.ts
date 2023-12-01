@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, Delete } from "@nestjs/common";
 import { AddressesService } from "./addresses.service";
 import { AddressesDto } from "./addresses.dto";
+import { Address } from "./addresses.entity";
 
 @Controller('addresses')
 export class AddressesController {
@@ -19,7 +20,7 @@ export class AddressesController {
     }
 
     @Get(':id')
-    async getAllAddress(@Param('id') id: string): Promise<any>{
+    async getAllAddress(@Param('id') id: string): Promise<{email: string,addresses: Address[]} | {message : string}>{
         return this.addressesService.getAllAddress(id);
     }
 }

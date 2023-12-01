@@ -73,16 +73,19 @@ export class UsersService {
     }
   }
 
-  async findAllAddressById(id: string): Promise<Address[]> {
+  async findAllAddressById(id: string): Promise<{email: string,addresses: Address[]} | {message : string}> {
     const addresses = await this.usersRepository
       .createQueryBuilder("user")
       .leftJoinAndSelect("user.addresses", "address")
       .where('user.id = :userId', { userId: id })
       .getOne()
     if (!addresses) {
-      throw new Error('User not found');
+      throw new BadRequestException();
     }
 
-    return addresses.addresses
+    return {
+      email: addresses.email,
+      addresses: addresses.addresses
+    }
   }
 }

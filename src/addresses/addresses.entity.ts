@@ -235,6 +235,9 @@ export class Address extends BaseEntity {
     })
     province: Province
 
+    @Column({nullable: true})
+    phoneNumber: string;
+
     @Column({default: false})
     default:boolean
 

@@ -1,5 +1,5 @@
 import { Expose } from "class-transformer";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
 import { BaseDto } from "src/common/mysql/base.dto";
 import { Country, Province } from "./addresses.entity";
 import { UserDto } from "src/users/users.dto";
@@ -39,6 +39,10 @@ export class AddressesDto extends BaseDto {
     province: Province;
 
     @Expose()
+    phoneNumber: string;
+
+    @Expose()
+    @IsBoolean()
     default: boolean;
 
     @Expose()
