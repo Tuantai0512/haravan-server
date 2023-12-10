@@ -42,7 +42,6 @@ export class AddressesDto extends BaseDto {
     phoneNumber: string;
 
     @Expose()
-    @IsBoolean()
     default: boolean;
 
     @Expose()

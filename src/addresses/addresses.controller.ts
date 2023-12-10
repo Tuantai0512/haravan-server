@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, Delete, Put } from "@nestjs/common";
 import { AddressesService } from "./addresses.service";
 import { AddressesDto } from "./addresses.dto";
 import { Address } from "./addresses.entity";
@@ -9,9 +9,19 @@ export class AddressesController {
         private readonly addressesService: AddressesService,
     ) { }
 
+    @Get(':id')
+    async getAllAddress(@Param('id') id: string): Promise<{ email: string, addresses: Address[] } | { message: string }> {
+        return this.addressesService.getAllAddress(id);
+    }
+
     @Post()
-    async createAddress(@Body() addressesDto: AddressesDto): Promise<any> {
+    async createAddress(@Body() addressesDto: AddressesDto): Promise<AddressesDto> {
         return this.addressesService.save(addressesDto);
+    }
+
+    @Put(':id')
+    async updateAddress(@Param('id') id: string, @Body() addressesDto: AddressesDto): Promise<any> {
+        return this.addressesService.update(id, addressesDto);
     }
 
     @Delete(':id')
@@ -19,8 +29,4 @@ export class AddressesController {
         return this.addressesService.remove(id);
     }
 
-    @Get(':id')
-    async getAllAddress(@Param('id') id: string): Promise<{email: string,addresses: Address[]} | {message : string}>{
-        return this.addressesService.getAllAddress(id);
-    }
 }

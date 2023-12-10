@@ -5,7 +5,6 @@ import { User } from './users.entity';
 import { LoginForm, Password, UserDto } from './users.dto';
 import { plainToInstance } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
-import { AddressesDto } from 'src/addresses/addresses.dto';
 import { Address } from 'src/addresses/addresses.entity';
 
 const saltOrRounds = 12;
@@ -21,7 +20,7 @@ export class UsersService {
     const hashedPassword = await bcrypt.hash(userDto.password, saltOrRounds);
     const selectedUser = await this.usersRepository.findOneBy({ email: userDto.email });
     if (selectedUser) {
-      return { message: 'Email already exists' }
+      throw new BadRequestException({ message: 'Email already exists' })
     } else {
       const savedUser = await this.usersRepository.save({ ...userDto, password: hashedPassword });
       return plainToInstance(UserDto, savedUser, {
@@ -60,7 +59,7 @@ export class UsersService {
     if (result.affected) {
       return { message: 'Change password succeed' };
     } else {
-      return { message: 'Change password failed' };
+      throw new BadRequestException({ message: 'Change password failed' });
     }
   }
 
@@ -69,11 +68,11 @@ export class UsersService {
     if (result.affected) {
       return { message: 'Email delete succeed' };
     } else {
-      return { message: 'Email delete failed' };
+      throw new BadRequestException({ message: 'Email delete failed' });
     }
   }
 
-  async findAllAddressById(id: string): Promise<{email: string,addresses: Address[]} | {message : string}> {
+  async findAllAddressById(id: string): Promise<{email: string,addresses: Address[]}> {
     const addresses = await this.usersRepository
       .createQueryBuilder("user")
       .leftJoinAndSelect("user.addresses", "address")

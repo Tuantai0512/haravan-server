@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { Address } from "./addresses.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -14,7 +14,7 @@ export class AddressesService {
         private readonly userService: UsersService
     ) { }
 
-    async save(addressDto: AddressesDto): Promise<AddressesDto | { message: string }> {
+    async save(addressDto: AddressesDto): Promise<AddressesDto> {
         const user = await this.userService.findOne(addressDto.userId);
 
         if (user) {
@@ -27,7 +27,26 @@ export class AddressesService {
                 excludeExtraneousValues: true
             })
         } else {
-            return { message: 'create address failed' }
+            throw new BadRequestException({ message: 'create address failed' })
+        }
+    }
+
+    async update(id: string, addressDto: AddressesDto): Promise<{ message: string }> {
+        if(addressDto.default){
+            const allAddress = await this.userService.findAllAddressById(addressDto.userId);
+            const defaultAddress = allAddress.addresses.find(address => address.default);
+            const undefaultAddress = this.addressesRepository.create(defaultAddress);
+            undefaultAddress.default = false;
+            await this.addressesRepository.update(defaultAddress.id, undefaultAddress);
+        }
+
+        const {userId, ...rest} = addressDto;
+        const changeAddress = this.addressesRepository.create(rest);
+        const result =  await this.addressesRepository.update(id, changeAddress);
+        if (result.affected) {
+            return { message: 'Updated Address' };
+        } else {
+            throw new BadRequestException({ message: 'Update address failed' }) ;
         }
     }
 
@@ -36,7 +55,7 @@ export class AddressesService {
         if (result.affected) {
             return { message: 'Email delete succeed' };
         } else {
-            return { message: 'Email delete failed' };
+            throw new BadRequestException({ message: 'Email delete failed' }) ;
         }
     }
     
