@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Param, Delete, Put, Res, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, Delete, Put, Res, Req, UnauthorizedException, UseGuards, Patch } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { LoginForm, Password, UserDto } from './users.dto';
 import { Response, Request } from 'express';
@@ -62,4 +62,8 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
+  @Patch('restore/:id')
+  restoreUser(@Param('id') id:string): Promise<{ message: string }> {
+    return this.usersService.restore(id);
+  }
 }

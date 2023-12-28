@@ -1,6 +1,6 @@
 import { Address } from 'src/addresses/addresses.entity';
 import { BaseEntity } from 'src/common/mysql/base.entity';
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, DeleteDateColumn } from 'typeorm';
 
 export enum UserRole {
   ADMIN = "admin",
@@ -25,6 +25,11 @@ export class User extends BaseEntity {
   })
   role: UserRole;
 
-  @OneToMany(() => Address, (photo) => photo.user)
+  @DeleteDateColumn({
+    name: 'deletedAt'
+  })
+  deletedAt: string;
+
+  @OneToMany(() => Address, (address) => address.user)
   addresses: Address[]
 }

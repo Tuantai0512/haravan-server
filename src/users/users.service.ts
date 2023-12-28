@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
@@ -64,11 +64,20 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<{ message: string }> {
-    const result = await this.usersRepository.delete(id);
+    const result = await this.usersRepository.softDelete(id);
     if (result.affected) {
       return { message: 'Email delete succeed' };
     } else {
       throw new BadRequestException({ message: 'Email delete failed' });
+    }
+  }
+
+  async restore(id: string): Promise<{ message: string }> {
+    const result = await this.usersRepository.restore(id);
+    if (result.affected) {
+      return { message: 'Email restored' };
+    } else {
+      throw new BadRequestException({ message: 'Email restore failed' });
     }
   }
 

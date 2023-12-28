@@ -18,6 +18,16 @@ export class AddressesService {
         const user = await this.userService.findOne(addressDto.userId);
 
         if (user) {
+            if(addressDto.default){
+                const allAddress = await this.userService.findAllAddressById(addressDto.userId);
+                const defaultAddress = allAddress.addresses.find(address => address.default);
+                if(defaultAddress){
+                    const undefaultAddress = this.addressesRepository.create(defaultAddress);
+                    undefaultAddress.default = false;
+                    await this.addressesRepository.update(defaultAddress.id, undefaultAddress);
+                };
+            }
+
             const { userId, ...rest } = addressDto;
             const address = this.addressesRepository.create(rest);
             address.user = user;
@@ -35,9 +45,19 @@ export class AddressesService {
         if(addressDto.default){
             const allAddress = await this.userService.findAllAddressById(addressDto.userId);
             const defaultAddress = allAddress.addresses.find(address => address.default);
-            const undefaultAddress = this.addressesRepository.create(defaultAddress);
-            undefaultAddress.default = false;
-            await this.addressesRepository.update(defaultAddress.id, undefaultAddress);
+            if(defaultAddress){
+                const undefaultAddress = this.addressesRepository.create(defaultAddress);
+                undefaultAddress.default = false;
+                await this.addressesRepository.update(defaultAddress.id, undefaultAddress);
+            };
+        }else{
+            const allAddress = await this.userService.findAllAddressById(addressDto.userId);
+            const defaultAddress = allAddress.addresses.find(address => address.default);
+            if(defaultAddress){
+                if(defaultAddress.id === id){
+                    addressDto.default = true;
+                };
+            };
         }
 
         const {userId, ...rest} = addressDto;
@@ -53,7 +73,7 @@ export class AddressesService {
     async remove(id: string): Promise<{ message: string }> {
         const result = await this.addressesRepository.delete(id);
         if (result.affected) {
-            return { message: 'Email delete succeed' };
+            return { message: 'Deleted address' };
         } else {
             throw new BadRequestException({ message: 'Email delete failed' }) ;
         }

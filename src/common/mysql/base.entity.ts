@@ -13,4 +13,5 @@ export class BaseEntity {
         name: 'updatedAt'
     })
     updatedAt: string;
+
 }

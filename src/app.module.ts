@@ -6,6 +6,9 @@ import { User } from './users/users.entity';
 import { UsersModule } from './users/users.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { Address } from './addresses/addresses.entity';
+import { Category } from './category/category.entity';
+import { Product } from './product/product.entity';
+import { CategoryModule } from './category/category.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -15,11 +18,12 @@ import { Address } from './addresses/addresses.entity';
         username: 'root',
         password: '123456',
         database: 'haravan-store',
-        entities: [User, Address],
+        entities: [User, Address, Category, Product],
         synchronize: true,
       }),
     UsersModule,
-    AddressesModule
+    AddressesModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
