@@ -25,6 +25,10 @@ export class CategoryService {
         return this.categoryRepository.find();
     }
 
+    async findOne(id: string): Promise<any> {
+        return this.categoryRepository.findOneBy({ id });
+    }
+
     async update(id: string, categoryDto: CategoryDto): Promise<any> {
         const result = await this.categoryRepository.update(id, categoryDto);
         if (result.affected) {

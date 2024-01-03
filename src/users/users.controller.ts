@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { LoginForm, Password, UserDto } from './users.dto';
 import { Response, Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { AuthGuard } from './users.guard';
+import { AuthGuard } from '../common/guard/authentication';
 
 @Controller('users')
 export class UsersController {

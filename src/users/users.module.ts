@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { User } from './users.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthGuard } from '../common/guard/authentication';
 
 export const jwtConstants = {
   secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
@@ -20,6 +21,6 @@ export const jwtConstants = {
   ],
   providers: [UsersService],
   controllers: [UsersController],
-  exports: [UsersService]
+  exports: [UsersService ]
 })
 export class UsersModule {}

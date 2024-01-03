@@ -14,12 +14,12 @@ export class AddressesService {
         private readonly userService: UsersService
     ) { }
 
-    async save(addressDto: AddressesDto): Promise<AddressesDto> {
-        const user = await this.userService.findOne(addressDto.userId);
+    async save(userId: string,addressDto: AddressesDto): Promise<AddressesDto> {
+        const user = await this.userService.findOne(userId);
 
         if (user) {
             if(addressDto.default){
-                const allAddress = await this.userService.findAllAddressById(addressDto.userId);
+                const allAddress = await this.userService.findAllAddressById(userId);
                 const defaultAddress = allAddress.addresses.find(address => address.default);
                 if(defaultAddress){
                     const undefaultAddress = this.addressesRepository.create(defaultAddress);
@@ -28,8 +28,7 @@ export class AddressesService {
                 };
             }
 
-            const { userId, ...rest } = addressDto;
-            const address = this.addressesRepository.create(rest);
+            const address = this.addressesRepository.create(addressDto);
             address.user = user;
 
             const saveAddress = await this.addressesRepository.save(address);
@@ -41,9 +40,9 @@ export class AddressesService {
         }
     }
 
-    async update(id: string, addressDto: AddressesDto): Promise<{ message: string }> {
+    async update(id: string, userId: string, addressDto: AddressesDto): Promise<{ message: string }> {
         if(addressDto.default){
-            const allAddress = await this.userService.findAllAddressById(addressDto.userId);
+            const allAddress = await this.userService.findAllAddressById(userId);
             const defaultAddress = allAddress.addresses.find(address => address.default);
             if(defaultAddress){
                 const undefaultAddress = this.addressesRepository.create(defaultAddress);
@@ -51,7 +50,7 @@ export class AddressesService {
                 await this.addressesRepository.update(defaultAddress.id, undefaultAddress);
             };
         }else{
-            const allAddress = await this.userService.findAllAddressById(addressDto.userId);
+            const allAddress = await this.userService.findAllAddressById(userId);
             const defaultAddress = allAddress.addresses.find(address => address.default);
             if(defaultAddress){
                 if(defaultAddress.id === id){
@@ -60,8 +59,7 @@ export class AddressesService {
             };
         }
 
-        const {userId, ...rest} = addressDto;
-        const changeAddress = this.addressesRepository.create(rest);
+        const changeAddress = this.addressesRepository.create(addressDto);
         const result =  await this.addressesRepository.update(id, changeAddress);
         if (result.affected) {
             return { message: 'Updated Address' };
@@ -79,7 +77,7 @@ export class AddressesService {
         }
     }
     
-    getAllAddress(id: string) {
-        return this.userService.findAllAddressById(id);
+    getAllAddress(userId: string) {
+        return this.userService.findAllAddressById(userId);
     }
 }

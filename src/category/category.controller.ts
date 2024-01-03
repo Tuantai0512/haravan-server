@@ -13,6 +13,11 @@ export class CategoryController {
         return this.addressesService.findAll();
     }
 
+    @Get(':id')
+    async selectCategory(@Param('id') id: string): Promise<any>{
+        return this.addressesService.findOne(id);
+    }
+
     @Post()
     async create(@Body() CategoryDto: CategoryDto): Promise<any>{
         return this.addressesService.save(CategoryDto);

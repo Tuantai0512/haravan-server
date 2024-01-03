@@ -7,10 +7,6 @@ import { DoesNotContainSpecialCharacter } from "src/common/decorator/checkSpecia
 
 export class AddressesDto extends BaseDto {
 
-    @IsNotEmpty()
-    @Expose()
-    userId: string;
-
     @DoesNotContainSpecialCharacter()
     @IsNotEmpty()
     @IsString()
