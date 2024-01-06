@@ -36,7 +36,7 @@ export class AddressesService {
                 excludeExtraneousValues: true
             })
         } else {
-            throw new BadRequestException({ message: 'create address failed' })
+            throw new BadRequestException({ message: `User isn't exist` })
         }
     }
 

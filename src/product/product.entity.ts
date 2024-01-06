@@ -1,6 +1,7 @@
 import { Category } from 'src/category/category.entity';
 import { BaseEntity } from 'src/common/mysql/base.entity';
-import { Entity, Column, DeleteDateColumn, ManyToOne } from 'typeorm';
+import { Galery } from 'src/galery/galery.entity';
+import { Entity, Column, DeleteDateColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity({
     name: 'product'
@@ -16,10 +17,7 @@ export class Product extends BaseEntity {
     @Column()
     discount: number;
 
-    @Column()
-    thumbnail: string;
-
-    @Column()
+    @Column("longtext")
     description: string;
 
     @DeleteDateColumn({
@@ -28,6 +26,8 @@ export class Product extends BaseEntity {
     deletedAt: string;
 
     @ManyToOne(() => Category, (category) => category.products)
-    category: Category[]
+    category: Category;
 
+    @OneToMany(() => Galery, (galery) => galery.product)
+    galery: Galery[]
 }
