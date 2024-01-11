@@ -34,11 +34,12 @@ export class ProductService {
         return this.productRepository.find({
             relations: {
                 category: true,
+                galery:true,
             },
             select:{
                 category: {
                     name: true,
-                }
+                },
             }
         });
     }
@@ -48,6 +49,7 @@ export class ProductService {
             where: { id },
             relations: {
                 category: true,
+                galery:true,
             },
             select:{
                 category: {

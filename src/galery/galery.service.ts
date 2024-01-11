@@ -39,7 +39,6 @@ export class GaleryService {
         return s3.getSignedUrl('getObject', {
             Key: media_key,
             Bucket: this.publicBucketName,
-            Expire: 60 * 60 * 12, // 12 hour
         })
     }
 
@@ -48,7 +47,8 @@ export class GaleryService {
 
         str = slugify(str, {
             lower: true,      // convert to lower case, defaults to `false`
-            locale: 'vi',      // language code of the locale to use    
+            locale: 'vi',      // language code of the locale to use 
+            strict: true,     // strip special characters except replacement, defaults to `false`   
         });
 
         return str
@@ -70,6 +70,9 @@ export class GaleryService {
             const newPhoto = this.galeryRepository.create(data);
             newPhoto.product = product;
             newPhoto.key = `${this.slug(product.title)}/${this.slug(name)}.${extension}`;
+            let urlParam = new URL(this.getLinkMediaKey(newPhoto.key));
+            let urlWithoutParams = urlParam.origin + urlParam.pathname;
+            newPhoto.url = urlWithoutParams;
             await this.uploadS3(file.buffer, newPhoto.key, file.mimetype);
             return await this.galeryRepository.save(newPhoto);
         } else {
@@ -103,7 +106,7 @@ export class GaleryService {
                 .createQueryBuilder('galery')
                 .where('galery.key = :key', { key: media.key })
                 .getMany();
-            if(duplicatePhoto.length == 1 ){
+            if (duplicatePhoto.length == 1) {
                 const s3 = this.getS3();
                 const params = {
                     Bucket: this.publicBucketName,
@@ -117,5 +120,9 @@ export class GaleryService {
         } else {
             throw new NotFoundException(`Product's photo doesn't exist`);
         }
+    }
+
+    async update(photo: Galery): Promise<any> {
+        return await this.galeryRepository.update(photo.id, photo);
     }
 }

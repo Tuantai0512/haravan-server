@@ -22,6 +22,9 @@ export class Galery extends BaseEntity {
     @Column()
     key: string;
 
+    @Column("longtext")
+    url: string;
+
     @ManyToOne(() => Product, (product) => product.galery)
     product: Product;
 }

@@ -1,6 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { GaleryService } from "./galery.service";
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
+import { Galery } from "./galery.entity";
+import { extname } from "path";
 
 @Controller('galery')
 export class GaleryController {
@@ -8,7 +10,7 @@ export class GaleryController {
   constructor(private readonly galeryService: GaleryService) {}
 
   // get link of private file
-  @Get('access')
+  @Get('/access')
   async getLinkAccess(@Query('key') key: string) {
     const url = this.galeryService.getLinkMediaKey(key);
     return {
@@ -18,8 +20,32 @@ export class GaleryController {
 
   // upload single file
   @Post(':productId/upload')
-  @UseInterceptors(FileInterceptor('file'))
-  async upload(@UploadedFile() file, @Param('productId') productId: string) {
+  @UseInterceptors(FileInterceptor('file',{
+    fileFilter:(req, file, cb) => {
+      const ext = extname(file.originalname);
+      const allowedExtArr = ['.jpg','.png','.jpeg','.webp'];
+      if(!allowedExtArr.includes(ext)){
+        req.fileValidationError = `Wrong extension type. Accepted file ext are: ${allowedExtArr.toString()}`;
+        cb(null, false)
+      }else{
+        const fileSize = parseInt(req.headers['content-length'])
+        const threeMB = 1024 * 1024 * 3;
+        if(fileSize > threeMB){
+          req.fileValidationError = `File size is too large. Accept file size in less than 3 MB`;
+          cb(null, false)
+        }else{
+          cb(null, true)
+        }
+      }
+    } 
+  }))
+  async upload(@Req() req: any,@UploadedFile() file, @Param('productId') productId: string) {
+    if(req.fileValidationError){
+      throw new BadRequestException(req.fileValidationError)
+    }
+    if(!file){
+      throw new BadRequestException('File is required');
+    }
     return await this.galeryService.upload(file, productId);
   }
 
@@ -45,5 +71,10 @@ export class GaleryController {
   async delete(@Param('photoId') media_id: string) {
     await this.galeryService.deleteFileS3(media_id);
     return true;
+  }
+
+  @Put()
+  async update(@Body() photo: Galery) : Promise<any> {
+    return await this.galeryService.update(photo);
   }
 }
