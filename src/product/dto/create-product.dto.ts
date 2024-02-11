@@ -1,5 +1,5 @@
 import { Expose } from "class-transformer";
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, Min } from "class-validator";
 
 export class CreateProductDto {
 
@@ -9,9 +9,11 @@ export class CreateProductDto {
 
     @Expose()
     @IsNotEmpty()
+    @Min(0)
     price: number;
 
     @Expose()
+    @Min(0)
     discount: number;
 
     @Expose()

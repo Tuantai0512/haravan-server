@@ -1,5 +1,5 @@
 import { Expose } from "class-transformer";
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, Min } from "class-validator";
 import { BaseDto } from "src/common/mysql/base.dto";
 
 export class UpdateProductDto {
@@ -12,9 +12,11 @@ export class UpdateProductDto {
     title: string;
 
     @Expose()
+    @Min(0)
     price: number;
 
     @Expose()
+    @Min(0)
     discount: number;
 
     @Expose()

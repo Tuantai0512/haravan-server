@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { Galery } from "./galery.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -69,6 +69,11 @@ export class GaleryService {
             }
             const newPhoto = this.galeryRepository.create(data);
             newPhoto.product = product;
+            if(product.galery.length == 0){
+                newPhoto.avatar = true;
+            }else{
+                newPhoto.avatar = false;
+            }
             newPhoto.key = `${this.slug(product.title)}/${this.slug(name)}.${extension}`;
             let urlParam = new URL(this.getLinkMediaKey(newPhoto.key));
             let urlWithoutParams = urlParam.origin + urlParam.pathname;
@@ -123,6 +128,39 @@ export class GaleryService {
     }
 
     async update(photo: Galery): Promise<any> {
-        return await this.galeryRepository.update(photo.id, photo);
+        if(!photo.id){
+            throw new BadRequestException(`Enter product's photo id, please!!!!!`)
+        }
+        const selectedPhoto = await this.galeryRepository.findOne({ 
+            where: { id: photo.id },
+            relations: {
+                product: true
+            },
+        });
+        if(photo.avatar){
+            const product = await this.productService.findOne(selectedPhoto.product.id);
+            const avatarPhoto = product.galery.find(photo => photo.avatar);
+            if(avatarPhoto){
+                const unavatarPhoto = this.galeryRepository.create(avatarPhoto);
+                unavatarPhoto.avatar = false;
+                await this.galeryRepository.update(avatarPhoto.id, unavatarPhoto);
+            };
+        }else{
+            const product = await this.productService.findOne(selectedPhoto.product.id);
+            const avatarPhoto = product.galery.find(photo => photo.avatar);
+            if(avatarPhoto){
+                if(avatarPhoto.id === photo.id){
+                    photo.avatar = true;
+                };
+            };
+        }
+
+        const changePhoto = this.galeryRepository.create(photo);
+        const result =  await this.galeryRepository.update(photo.id, changePhoto);
+        if (result.affected) {
+            return { message: 'Updated photo' };
+        } else {
+            throw new BadRequestException({ message: 'Update photo failed' }) ;
+        }
     }
 }

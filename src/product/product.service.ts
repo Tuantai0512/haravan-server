@@ -36,11 +36,6 @@ export class ProductService {
                 category: true,
                 galery:true,
             },
-            select:{
-                category: {
-                    name: true,
-                },
-            }
         });
     }
 
@@ -51,11 +46,6 @@ export class ProductService {
                 category: true,
                 galery:true,
             },
-            select:{
-                category: {
-                    name: true,
-                }
-            } 
         });
     }
 

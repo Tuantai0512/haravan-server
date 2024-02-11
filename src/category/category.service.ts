@@ -22,11 +22,24 @@ export class CategoryService {
     }
 
     async findAll(): Promise<any> {
-        return this.categoryRepository.find();
+        return this.categoryRepository.find({
+            relations: {
+                products: {
+                    galery: true
+                }
+            }
+        });
     }
 
     async findOne(id: string): Promise<any> {
-        return this.categoryRepository.findOneBy({ id });
+        return this.categoryRepository.findOne({ 
+            where: { id },
+            relations: {
+                products: {
+                    galery: true
+                }
+            }
+        });
     }
 
     async update(id: string, categoryDto: CategoryDto): Promise<any> {

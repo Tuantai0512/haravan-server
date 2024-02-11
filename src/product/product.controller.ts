@@ -11,12 +11,12 @@ export class ProductController {
     ) { }
 
     @Get()
-    async allCategory(): Promise<Product[]>{
+    async allProduct(): Promise<Product[]>{
         return this.productService.findAll();
     }
 
     @Get(':id')
-    async selectCategory(@Param('id') id: string): Promise<any>{
+    async selectProduct(@Param('id') id: string): Promise<any>{
         return this.productService.findOne(id);
     }
 
@@ -31,7 +31,7 @@ export class ProductController {
     }
 
     @Delete(':id')
-    async removeCategory(@Param('id') id: string): Promise<any>{
+    async removeProduct(@Param('id') id: string): Promise<any>{
         return this.productService.remove(id);
     }
 }
