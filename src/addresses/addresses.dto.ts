@@ -1,5 +1,5 @@
 import { Expose } from "class-transformer";
-import { IsBoolean, IsNotEmpty, IsPhoneNumber, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsPhoneNumber, IsString, ValidateIf } from "class-validator";
 import { BaseDto } from "src/common/mysql/base.dto";
 import { Country, Province } from "./addresses.entity";
 import { UserDto } from "src/users/users.dto";
@@ -34,9 +34,10 @@ export class AddressesDto extends BaseDto {
     @Expose()
     province: Province;
 
-    @IsPhoneNumber()
+    @ValidateIf((obj) => obj.phoneNumber !== null && obj.phoneNumber !== '')
+    @IsPhoneNumber(null, {message : 'phoneNumber must be a valid phone number, example: +(CountryCode) .....'})
     @Expose()
-    phoneNumber: string;
+    phoneNumber?: string | null;
 
     @Expose()
     @IsBoolean()

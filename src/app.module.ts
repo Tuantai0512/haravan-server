@@ -13,6 +13,10 @@ import { Galery } from './galery/galery.entity';
 import { ProductModule } from './product/product.module';
 import { GaleryModule } from './galery/galery.module';
 import { ConfigModule } from '@nestjs/config';
+import { Cart } from './cart/cart.entity';
+import { CartModule } from './cart/cart.module';
+import { CartDetail } from './cartDetail/cartDetail.entity';
+import { CartDetailModule } from './cartDetail/cartDetail.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -23,14 +27,16 @@ import { ConfigModule } from '@nestjs/config';
         username: 'root',
         password: '123456',
         database: 'haravan-store',
-        entities: [User, Address, Category, Product, Galery],
+        entities: [User, Address, Category, Product, Galery, Cart, CartDetail],
         synchronize: true,
       }),
     UsersModule,
     AddressesModule,
     CategoryModule,
     ProductModule,
-    GaleryModule
+    GaleryModule,
+    CartModule,
+    CartDetailModule
   ],
   controllers: [AppController],
   providers: [AppService],
