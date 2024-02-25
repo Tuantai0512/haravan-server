@@ -25,7 +25,7 @@ export class CartDetailController {
     }
 
     @Put(':id')
-    async update(@Param('id') id: string, @Body() cartDetailDto: CartDetailDto): Promise<any>{
+    async update(@Param('id') id: string, @Body() cartDetailDto: CartDetail): Promise<any>{
         return this.cartDetailService.update(id, cartDetailDto);
     }
 

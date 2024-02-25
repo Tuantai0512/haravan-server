@@ -1,3 +1,4 @@
+import { CartDetail } from 'src/cartDetail/cartDetail.entity';
 import { Category } from 'src/category/category.entity';
 import { BaseEntity } from 'src/common/mysql/base.entity';
 import { Galery } from 'src/galery/galery.entity';
@@ -30,4 +31,7 @@ export class Product extends BaseEntity {
 
     @OneToMany(() => Galery, (galery) => galery.product)
     galery: Galery[]
+
+    @OneToMany(() => CartDetail, (detail) => detail.product)
+    cartDetail: CartDetail[]
 }

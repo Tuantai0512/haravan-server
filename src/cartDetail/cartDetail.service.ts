@@ -22,7 +22,7 @@ export class CartDetailService {
             if(selectedProduct){
                 const existedProduct = selectedCart.items.find((item) => item.product.id == cartDetailDto.productId)
                 if(existedProduct){
-                    return this.cartDetailRepository.update(existedProduct.id, { quantity: existedProduct.quantity + 1})
+                    return this.cartDetailRepository.update(existedProduct.id, { quantity: existedProduct.quantity + (cartDetailDto.quantity || 1)})
                 }else{
                     const cartDetail = this.cartDetailRepository.create(cartDetailDto);
                     cartDetail.cart = selectedCart;
@@ -56,7 +56,7 @@ export class CartDetailService {
         });
     }
 
-    async update(id: string, cartDto: CartDetailDto): Promise<any> {
+    async update(id: string, cartDto: CartDetail): Promise<any> {
         const result = await this.cartDetailRepository.update(id, cartDto);
         if (result.affected) {
             return { message: 'Category updated' };

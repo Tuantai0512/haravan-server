@@ -40,6 +40,9 @@ export class Cart extends BaseEntity {
     province: Province;
 
     @Column({nullable: true})
+    shipping: string;
+    
+    @Column({nullable: true})
     payment: string;
 
     @OneToMany(() => CartDetail, (detail) => detail.cart)

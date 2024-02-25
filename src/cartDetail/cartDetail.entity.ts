@@ -11,8 +11,7 @@ export class CartDetail extends BaseEntity {
     @ManyToOne(() => Cart, (cart) => cart.items)
     cart: Cart;
 
-    @OneToOne(() => Product)
-    @JoinColumn()
+    @ManyToOne(() => Product, (product) => {product.cartDetail})
     product: Product;
 
     @Column({nullable: true})
