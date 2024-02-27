@@ -36,3 +36,6 @@ lerna-debug.log*
 
 # Local database
 /data
+
+#Environment variables
+.env

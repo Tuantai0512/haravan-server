@@ -21,9 +21,9 @@ export class GaleryService {
         private readonly productService: ProductService,
     ) {
         this.region = this.configService.get('AWS_REGION'),
-            this.accessKeyId = this.configService.get('AWS_ACCESS_KEY_ID'),
-            this.secretAccessKey = this.configService.get('AWS_SECRET_ACCESS_KEY'),
-            this.publicBucketName = this.configService.get('AWS_PUBLIC_BUCKET_NAME')
+        this.accessKeyId = this.configService.get('AWS_ACCESS_KEY_ID'),
+        this.secretAccessKey = this.configService.get('AWS_SECRET_ACCESS_KEY'),
+        this.publicBucketName = this.configService.get('AWS_PUBLIC_BUCKET_NAME')
     }
 
     private getS3() {
@@ -69,9 +69,9 @@ export class GaleryService {
             }
             const newPhoto = this.galeryRepository.create(data);
             newPhoto.product = product;
-            if(product.galery.length == 0){
+            if (product.galery.length == 0) {
                 newPhoto.avatar = true;
-            }else{
+            } else {
                 newPhoto.avatar = false;
             }
             newPhoto.key = `${this.slug(product.title)}/${this.slug(name)}.${extension}`;
@@ -128,39 +128,39 @@ export class GaleryService {
     }
 
     async update(photo: Galery): Promise<any> {
-        if(!photo.id){
+        if (!photo.id) {
             throw new BadRequestException(`Enter product's photo id, please!!!!!`)
         }
-        const selectedPhoto = await this.galeryRepository.findOne({ 
+        const selectedPhoto = await this.galeryRepository.findOne({
             where: { id: photo.id },
             relations: {
                 product: true
             },
         });
-        if(photo.avatar){
+        if (photo.avatar) {
             const product = await this.productService.findOne(selectedPhoto.product.id);
             const avatarPhoto = product.galery.find(photo => photo.avatar);
-            if(avatarPhoto){
+            if (avatarPhoto) {
                 const unavatarPhoto = this.galeryRepository.create(avatarPhoto);
                 unavatarPhoto.avatar = false;
                 await this.galeryRepository.update(avatarPhoto.id, unavatarPhoto);
             };
-        }else{
+        } else {
             const product = await this.productService.findOne(selectedPhoto.product.id);
             const avatarPhoto = product.galery.find(photo => photo.avatar);
-            if(avatarPhoto){
-                if(avatarPhoto.id === photo.id){
+            if (avatarPhoto) {
+                if (avatarPhoto.id === photo.id) {
                     photo.avatar = true;
                 };
             };
         }
 
         const changePhoto = this.galeryRepository.create(photo);
-        const result =  await this.galeryRepository.update(photo.id, changePhoto);
+        const result = await this.galeryRepository.update(photo.id, changePhoto);
         if (result.affected) {
             return { message: 'Updated photo' };
         } else {
-            throw new BadRequestException({ message: 'Update photo failed' }) ;
+            throw new BadRequestException({ message: 'Update photo failed' });
         }
     }
 }

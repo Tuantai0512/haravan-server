@@ -12,24 +12,25 @@ import { CategoryModule } from './category/category.module';
 import { Galery } from './galery/galery.entity';
 import { ProductModule } from './product/product.module';
 import { GaleryModule } from './galery/galery.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Cart } from './cart/cart.entity';
 import { CartModule } from './cart/cart.module';
 import { CartDetail } from './cartDetail/cartDetail.entity';
 import { CartDetailModule } from './cartDetail/cartDetail.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
-        type: 'mysql',
-        host: 'localhost',
-        port: 3307,
-        username: 'root',
-        password: '123456',
-        database: 'haravan-store',
-        entities: [User, Address, Category, Product, Galery, Cart, CartDetail],
-        synchronize: true,
-      }),
+      type: 'mysql',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      entities: [User, Address, Category, Product, Galery, Cart, CartDetail],
+      synchronize: true
+    }),
     UsersModule,
     AddressesModule,
     CategoryModule,
@@ -41,4 +42,4 @@ import { CartDetailModule } from './cartDetail/cartDetail.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
